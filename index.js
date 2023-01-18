@@ -15,7 +15,9 @@ const sql = postgres(URL, { ssl: 'require' });
     const result = await sql`select version()`;
     console.log(result);
 })()
-app.use(cors());
+app.use(cors({
+    origin: '*'
+}));
 app.use(bodyParser());
 app.post('/signup', (req, res) => {
     const {email_id, password} = req.body

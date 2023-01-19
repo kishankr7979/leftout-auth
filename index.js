@@ -9,11 +9,8 @@ dotenv.config()
 const postgres  = require('postgres');
 const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID } = process.env;
 const URL = `postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}?options=project%3D${ENDPOINT_ID}`;
-const {login} = require('./methods/login');
-const {signup} = require('./methods/signup');
-const {onboard} = require('./methods/onboard');
-const {validateToken} = require('./methods/validate-token');
-const {getUserDetails} = require('./methods/get-user-details');
+const {login, signup, onboard, getUserDetails} = require('./api');
+const {validateToken} = require('./utils');
 const sql = postgres(URL, { ssl: 'require' });
 (async() => {
     const result = await sql`select version()`;

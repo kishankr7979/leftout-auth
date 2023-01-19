@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 const signup = async(emailId, password, sql, req, res) => {
     if(!emailId || !password) {
@@ -5,7 +6,8 @@ const signup = async(emailId, password, sql, req, res) => {
     }
     const encryptedPassword = await bcrypt.hash(password, 10);
     try {
-        const data = await   sql`INSERT INTO auth(email, password) VALUES(${emailId}, ${encryptedPassword})`;
+        const uuid = uuidv4();
+        const data = await   sql`INSERT INTO auth(email, password, id) VALUES(${emailId}, ${encryptedPassword}, ${uuid})`;
         res.status(200).send({data: true, message: data})
         console.log(data)
     }

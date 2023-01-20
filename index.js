@@ -9,11 +9,9 @@ dotenv.config()
 const postgres  = require('postgres');
 const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID } = process.env;
 const URL = `postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}?options=project%3D${ENDPOINT_ID}`;
-const {login} = require('./methods/login');
-const {signup} = require('./methods/signup');
-const {onboard} = require('./methods/onboard');
-const {validateToken} = require('./methods/validate-token');
-const {getUserDetails} = require('./methods/get-user-details');
+const {login, signup, onboard, getUserDetails, forgot, resetPassword} = require('./api');
+const {sendMail} = require('./configs/send-mail');
+const {validateToken} = require('./utils');
 const sql = postgres(URL, { ssl: 'require' });
 (async() => {
     const result = await sql`select version()`;
@@ -58,6 +56,16 @@ app.get('/user/detail/:id', (req, res) => {
     getUserDetails(id, sql, res)
 })
 
+app.post('/forgot',(req, res) => {
+    const {email_id} = req.body;
+    forgot(email_id, sql, res);
+})
+
+app.post('/reset/password', async(req, res) => {
+    const {email_id, password, new_password} = req.body;
+    if(!email_id && !password && !new_password) return res.status(500).send({success: false, message: 'something went wrong'});
+    await resetPassword(email_id, password, new_password, sql, res);
+})
 app.listen(port, () => {
-    console.log('server is listening')
+    console.log('server is listening', port)
 })

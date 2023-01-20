@@ -12,7 +12,7 @@ const login = async(emailId, password, sql, req, res) => {
         const userData = await sql`SELECT * FROM users WHERE id = ${id}`
         if(decrypted){
             const KEY = process.env.TOKEN_KEY
-            let token = jwt.sign({email: emailId}, KEY, {expiresIn: "2h"})
+            let token = jwt.sign({email: emailId, user_id: id}, KEY, {expiresIn: "2h"})
             return  res.status(200).send({result: true, email: data[0].email,
                 jwt_token: token, message:'login success',
                 user_data: userData,
